@@ -1,0 +1,26 @@
+{
+  "name": "mime",
+  "version": "0.0.1",
+  "description": "mime for the browser and node.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nathanfaucett/mime.git"
+  },
+  "main": "src/index.js",
+  "keywords": [
+    "mime",
+    "mime.js"
+  ],
+  "author": "Nathan Faucett",
+  "license": "BSD-2-Clause",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "grunt": "",
+    "grunt-jsbeautifier": ""
+  },
+  "dependencies": {
+    "hash": "git://github.com/nathanfaucett/hash",
+    "utils": "git://github.com/nathanfaucett/utils"
+  }
+}
+
