@@ -51,6 +51,12 @@ function Mime() {
     this.defaultType = "text/plain";
     this.defaultExtension = "txt";
 
+    this.defaults();
+}
+
+Mime.prototype.defaults = function() {
+    if (this.types.length > 0 || this.extensions.length > 0) this.clear();
+    
     this.register("*/*", "*");
 
     this.register("text/html", "html htm xhtml");
@@ -80,7 +86,9 @@ function Mime() {
     this.register("application/json", "json");
     this.register("application/pdf", "pdf");
     this.register("application/zip", "zip");
-}
+    
+    return this;
+};
 
 Mime.prototype.clear = function() {
 
