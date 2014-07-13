@@ -19,8 +19,8 @@
     "grunt-jsbeautifier": ""
   },
   "dependencies": {
-    "hash": "git://github.com/nathanfaucett/hash",
-    "utils": "git://github.com/nathanfaucett/utils"
+    "hash": "nathanfaucett/hash",
+    "utils": "nathanfaucett/utils"
   }
 }
 
