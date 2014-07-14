@@ -16,5 +16,9 @@
     "**/.*",
     "node_modules",
     "bower_components"
-  ]
+  ],
+  "dependencies": {
+    "hash": "nathanfaucett/hash",
+    "utils": "nathanfaucett/utils"
+  }
 }
