@@ -56,7 +56,7 @@ function Mime() {
 
 Mime.prototype.defaults = function() {
     if (this.types.length > 0 || this.extensions.length > 0) this.clear();
-    
+
     this.register("*/*", "*");
 
     this.register("text/html", "html htm xhtml");
@@ -86,7 +86,7 @@ Mime.prototype.defaults = function() {
     this.register("application/json", "json");
     this.register("application/pdf", "pdf");
     this.register("application/zip", "zip");
-    
+
     return this;
 };
 
@@ -220,8 +220,8 @@ Mime.prototype.fromJSON = function(json) {
         }
     }
 
-    this.defaultType = "text/plain";
-    this.defaultExtension = "txt";
+    this.defaultType = json.defaultType;
+    this.defaultExtension = json.defaultExtension;
 
     return this;
 };
