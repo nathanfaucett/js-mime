@@ -64,6 +64,12 @@ Mime.prototype.defaults = function() {
     this.register("application/javascript", "js");
     this.register("text/css", "css");
 
+    this.register("image/svg+xml", "svg");
+    this.register("application/x-font-ttf", "ttf");
+    this.register("application/x-font-opentype", "otf");
+    this.register("application/font-woff", "woff");
+    this.register("application/vnd.ms-fontobject", "eot");
+
     this.register("image/png", "png");
     this.register("image/jpeg", "jpeg jpg");
     this.register("image/gif", "gif");
