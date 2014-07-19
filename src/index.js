@@ -12,8 +12,6 @@ function MimeType(types, exts) {
     this.type = this.types[0];
     this.exts = utils.isArray(exts) ? exts : (utils.isString(exts) ? exts.split(SPLITER) : []);
     this.ext = this.exts[0];
-
-    console.log(this);
 }
 
 MimeType.prototype.toJSON = function(json) {
