@@ -7,20 +7,28 @@ var SPLITER = /[ ,]+/,
     TYPE_REPLACER = /;[(.*)\S\s]+/;
 
 
-function MimeType(type, exts) {
-    this.type = type;
+function MimeType(types, exts) {
+    this.types = utils.isArray(types) ? types : (utils.isString(types) ? types.split(SPLITER) : []);
+    this.type = this.types[0];
     this.exts = utils.isArray(exts) ? exts : (utils.isString(exts) ? exts.split(SPLITER) : []);
     this.ext = this.exts[0];
+
+    console.log(this);
 }
 
 MimeType.prototype.toJSON = function(json) {
     json || (json = {});
     var exts = this.exts,
+        types = this.types,
         jsonExts = json.exts || (json.exts = []),
+        jsonTypes = json.types || (json.types = []),
         i, il;
 
     if (jsonExts.length) jsonExts.length = 0;
     for (i = 0, il = exts.length; i < il; i++) jsonExts.push(exts[i]);
+
+    if (jsonTypes.length) jsonTypes.length = 0;
+    for (i = 0, il = types.length; i < il; i++) jsonTypess.push(types[i]);
 
     json.type = this.type;
     json.ext = this.ext;
@@ -30,8 +38,13 @@ MimeType.prototype.toJSON = function(json) {
 
 MimeType.prototype.fromJSON = function(json) {
     var exts = this.exts,
+        types = this.types,
         jsonExts = json.exts || (json.exts = []),
+        jsonTypes = json.types || (json.types = []),
         i, il;
+
+    if (types.length) types.length = 0;
+    for (i = 0, il = jsonTypes.length; i < il; i++) types.push(jsonTypes[i]);
 
     if (exts.length) exts.length = 0;
     for (i = 0, il = jsonExts.length; i < il; i++) exts.push(jsonExts[i]);
@@ -65,9 +78,9 @@ Mime.prototype.defaults = function() {
     this.register("text/css", "css");
 
     this.register("image/svg+xml", "svg");
-    this.register("application/x-font-ttf", "ttf");
+    this.register("application/x-font-ttf application/x-font-truetype", "ttf");
     this.register("application/x-font-opentype", "otf");
-    this.register("application/font-woff", "woff");
+    this.register("application/font-woff", "woff wof");
     this.register("application/vnd.ms-fontobject", "eot");
 
     this.register("image/png", "png");
@@ -107,8 +120,8 @@ Mime.prototype.clear = function() {
     return this;
 };
 
-Mime.prototype.register = function(type, exts) {
-    var mimeType = new MimeType(type, exts);
+Mime.prototype.register = function(types, exts) {
+    var mimeType = new MimeType(types, exts);
 
     this.types.push(mimeType);
     this.extensions.push(mimeType);
@@ -117,7 +130,7 @@ Mime.prototype.register = function(type, exts) {
 };
 
 Mime.prototype.unregister = function(exts) {
-    exts = exts.split(SPLITER);
+    exts = utils.isArray(exts) ? exts : (utils.isString(exts) ? exts.split(SPLITER) : []);
     var extensions = this.extensions,
         i = exts.length;
 
@@ -133,12 +146,17 @@ Mime.prototype.unregister = function(exts) {
     return this;
 };
 
-Mime.prototype.unregisterType = function(type) {
-    var types = this.types,
-        mimeType = types.get(type);
+Mime.prototype.unregisterType = function(types) {
+    types = utils.isArray(types) ? types : (utils.isString(types) ? types.split(SPLITER) : []);
+    var thisTypes = this.thisTypes,
+        i = types.length;
+
+    while (i--) {
+        if ((mimeType = thisTypes.get(types[i]))) break;
+    }
 
     if (mimeType) {
-        types.remove(mimeType);
+        thisTypes.remove(mimeType);
         this.extensions.remove(mimeType);
     }
 
@@ -211,6 +229,7 @@ Mime.prototype.fromJSON = function(json) {
         type, extension,
         i, il;
 
+    types.setLength(jsonTypes.length);
     for (i = 0, il = jsonTypes.length; i < il; i++) {
         if ((type = types[i])) {
             type.fromJSON(jsonTypes[i]);
@@ -218,6 +237,7 @@ Mime.prototype.fromJSON = function(json) {
             types.push(new MimeType().fromJSON(jsonTypes[i]));
         }
     }
+    extension.setLength(jsonExtensions.length);
     for (i = 0, il = jsonExtensions.length; i < il; i++) {
         if ((extension = extensions[i])) {
             extension.fromJSON(jsonExtensions[i]);
