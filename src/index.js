@@ -26,7 +26,7 @@ MimeType.prototype.toJSON = function(json) {
     for (i = 0, il = exts.length; i < il; i++) jsonExts.push(exts[i]);
 
     if (jsonTypes.length) jsonTypes.length = 0;
-    for (i = 0, il = types.length; i < il; i++) jsonTypess.push(types[i]);
+    for (i = 0, il = types.length; i < il; i++) jsonTypes.push(types[i]);
 
     json.type = this.type;
     json.ext = this.ext;
@@ -235,7 +235,7 @@ Mime.prototype.fromJSON = function(json) {
             types.push(new MimeType().fromJSON(jsonTypes[i]));
         }
     }
-    extension.setLength(jsonExtensions.length);
+    extensions.setLength(jsonExtensions.length);
     for (i = 0, il = jsonExtensions.length; i < il; i++) {
         if ((extension = extensions[i])) {
             extension.fromJSON(jsonExtensions[i]);
