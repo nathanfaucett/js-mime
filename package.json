@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "hash": "nathanfaucett/hash",
-    "utils": "nathanfaucett/utils"
+    "type": "nathanfaucett/type"
   }
 }
 
