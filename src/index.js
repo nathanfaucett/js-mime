@@ -89,14 +89,12 @@ Mime.prototype.defaults = function() {
     this.register("image/tiff", "tiff tif");
 
     this.register("video/mpeg", "mpg mpeg mpe");
-    this.register("video/ogg", "ogv ogg");
+    this.register("video/ogg", "ogv");
     this.register("video/mp4", "mp4");
 
     this.register("audio/wav", "wav");
-    this.register("audio/mpeg", "mpg mpeg");
     this.register("audio/ogg", "oga ogg");
     this.register("audio/mp3", "mp3");
-    this.register("audio/mp4", "mp4");
 
     this.register("application/xml", "xml");
 
