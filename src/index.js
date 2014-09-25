@@ -110,8 +110,8 @@ Mime.prototype.clear = function() {
     this.defaultType = "text/plain";
     this.defaultExtension = "txt";
 
-    this.types.clear();
-    this.extensions.clear();
+    this.types.length = 0;
+    this.extensions.length = 0;
 
     return this;
 };
@@ -225,7 +225,7 @@ Mime.prototype.fromJSON = function(json) {
         type, extension,
         i, il;
 
-    types.setLength(jsonTypes.length);
+    types.length = jsonTypes.length;
     for (i = 0, il = jsonTypes.length; i < il; i++) {
         if ((type = types[i])) {
             type.fromJSON(jsonTypes[i]);
@@ -233,7 +233,7 @@ Mime.prototype.fromJSON = function(json) {
             types.push(new MimeType().fromJSON(jsonTypes[i]));
         }
     }
-    extensions.setLength(jsonExtensions.length);
+    extensions.length = jsonExtensions.length;
     for (i = 0, il = jsonExtensions.length; i < il; i++) {
         if ((extension = extensions[i])) {
             extension.fromJSON(jsonExtensions[i]);
