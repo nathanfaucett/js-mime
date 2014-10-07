@@ -1,5 +1,6 @@
 var Hash = require("hash"),
-    type = require("type");
+    type = require("type"),
+    fileTypes = require("./file_types");
 
 
 var SPLITER = /[ ,]+/,
@@ -157,6 +158,16 @@ Mime.prototype.unregisterType = function(types) {
     }
 
     return this;
+};
+
+Mime.prototype.fileType = function(value) {
+    var buf = Buffer.isBuffer(value) ? value : new Buffer(value),
+        key;
+
+    for (key in fileTypes) {
+        if (fileTypes[key](buf)) return key;
+    }
+    return undefined;
 };
 
 Mime.prototype.lookUp = function(path, fallback) {
