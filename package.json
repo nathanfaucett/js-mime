@@ -20,6 +20,7 @@
     "grunt-jsbeautifier": ""
   },
   "dependencies": {
+    "file_type": "nathanfaucett/file_type",
     "hash": "nathanfaucett/hash",
     "type": "nathanfaucett/type"
   }

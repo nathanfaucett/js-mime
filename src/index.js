@@ -1,6 +1,6 @@
 var Hash = require("hash"),
     type = require("type"),
-    fileTypes = require("./file_types");
+    fileType = require("file_type");
 
 
 var SPLITER = /[ ,]+/,
@@ -164,8 +164,8 @@ Mime.prototype.fileType = function(value) {
     var buf = Buffer.isBuffer(value) ? value : new Buffer(value),
         key;
 
-    for (key in fileTypes) {
-        if (fileTypes[key](buf)) return key;
+    for (key in fileType) {
+        if (fileType[key](buf)) return key;
     }
     return undefined;
 };
