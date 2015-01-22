@@ -1,5 +1,6 @@
 var Hash = require("hash"),
-    type = require("type"),
+    isArray = require("is_array"),
+    isString = require("is_string"),
     fileType = require("file_type");
 
 
@@ -9,9 +10,9 @@ var SPLITER = /[ ,]+/,
 
 
 function MimeType(types, exts) {
-    this.types = type.isArray(types) ? types : (type.isString(types) ? types.split(SPLITER) : []);
+    this.types = isArray(types) ? types : (isString(types) ? types.split(SPLITER) : []);
     this.type = this.types[0];
-    this.exts = type.isArray(exts) ? exts : (type.isString(exts) ? exts.split(SPLITER) : []);
+    this.exts = isArray(exts) ? exts : (isString(exts) ? exts.split(SPLITER) : []);
     this.ext = this.exts[0];
 }
 
@@ -127,7 +128,7 @@ Mime.prototype.register = function(types, exts) {
 };
 
 Mime.prototype.unregister = function(exts) {
-    exts = type.isArray(exts) ? exts : (type.isString(exts) ? exts.split(SPLITER) : []);
+    exts = isArray(exts) ? exts : (isString(exts) ? exts.split(SPLITER) : []);
     var extensions = this.extensions,
         i = exts.length;
 
@@ -144,7 +145,7 @@ Mime.prototype.unregister = function(exts) {
 };
 
 Mime.prototype.unregisterType = function(types) {
-    types = type.isArray(types) ? types : (type.isString(types) ? types.split(SPLITER) : []);
+    types = isArray(types) ? types : (isString(types) ? types.split(SPLITER) : []);
     var thisTypes = this.thisTypes,
         i = types.length;
 

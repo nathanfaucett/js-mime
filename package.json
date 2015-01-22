@@ -22,7 +22,8 @@
   "dependencies": {
     "file_type": "nathanfaucett/file_type",
     "hash": "nathanfaucett/hash",
-    "type": "nathanfaucett/type"
+    "is_string": "nathanfaucett/is_string",
+    "is_array": "nathanfaucett/is_array"
   }
 }
 
