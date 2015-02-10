@@ -1,4 +1,4 @@
-var Hash = require("hash"),
+var FastHash = require("fast_hash"),
     isArray = require("is_array"),
     isString = require("is_string"),
     fileType = require("file_type");
@@ -17,18 +17,30 @@ function MimeType(types, exts) {
 }
 
 MimeType.prototype.toJSON = function(json) {
+    var exts, types, jsonExts, jsonTypes, i, il;
+
     json || (json = {});
-    var exts = this.exts,
-        types = this.types,
-        jsonExts = json.exts || (json.exts = []),
-        jsonTypes = json.types || (json.types = []),
-        i, il;
 
-    if (jsonExts.length) jsonExts.length = 0;
-    for (i = 0, il = exts.length; i < il; i++) jsonExts.push(exts[i]);
+    exts = this.exts;
+    types = this.types;
+    jsonExts = json.exts || (json.exts = []);
+    jsonTypes = json.types || (json.types = []);
 
-    if (jsonTypes.length) jsonTypes.length = 0;
-    for (i = 0, il = types.length; i < il; i++) jsonTypes.push(types[i]);
+    if (jsonExts.length) {
+        jsonExts.length = 0;
+    }
+
+    for (i = 0, il = exts.length; i < il; i++) {
+        jsonExts.push(exts[i]);
+    }
+
+    if (jsonTypes.length) {
+        jsonTypes.length = 0;
+    }
+
+    for (i = 0, il = types.length; i < il; i++) {
+        jsonTypes.push(types[i]);
+    }
 
     json.type = this.type;
     json.ext = this.ext;
@@ -43,11 +55,21 @@ MimeType.prototype.fromJSON = function(json) {
         jsonTypes = json.types || (json.types = []),
         i, il;
 
-    if (types.length) types.length = 0;
-    for (i = 0, il = jsonTypes.length; i < il; i++) types.push(jsonTypes[i]);
+    if (types.length) {
+        types.length = 0;
+    }
 
-    if (exts.length) exts.length = 0;
-    for (i = 0, il = jsonExts.length; i < il; i++) exts.push(jsonExts[i]);
+    for (i = 0, il = jsonTypes.length; i < il; i++) {
+        types.push(jsonTypes[i]);
+    }
+
+    if (exts.length) {
+        exts.length = 0;
+    }
+
+    for (i = 0, il = jsonExts.length; i < il; i++) {
+        exts.push(jsonExts[i]);
+    }
 
     this.type = json.type;
     this.ext = json.ext;
@@ -58,8 +80,8 @@ MimeType.prototype.fromJSON = function(json) {
 
 function Mime() {
 
-    this.types = new Hash("ext");
-    this.extensions = new Hash("type");
+    this.types = new FastHash("ext");
+    this.extensions = new FastHash("type");
 
     this.defaultType = "text/plain";
     this.defaultExtension = "txt";
@@ -68,7 +90,9 @@ function Mime() {
 }
 
 Mime.prototype.defaults = function() {
-    if (this.types.length > 0 || this.extensions.length > 0) this.clear();
+    if (this.types.count() > 0 || this.extensions.count() > 0) {
+        this.clear();
+    }
 
     this.register("*/*", "*");
 
@@ -112,8 +136,8 @@ Mime.prototype.clear = function() {
     this.defaultType = "text/plain";
     this.defaultExtension = "txt";
 
-    this.types.length = 0;
-    this.extensions.length = 0;
+    this.types.clear();
+    this.extensions.clear();
 
     return this;
 };
@@ -121,19 +145,23 @@ Mime.prototype.clear = function() {
 Mime.prototype.register = function(types, exts) {
     var mimeType = new MimeType(types, exts);
 
-    this.types.push(mimeType);
-    this.extensions.push(mimeType);
+    this.types.add(mimeType);
+    this.extensions.add(mimeType);
 
     return this;
 };
 
 Mime.prototype.unregister = function(exts) {
+    var extensions, i;
+
     exts = isArray(exts) ? exts : (isString(exts) ? exts.split(SPLITER) : []);
-    var extensions = this.extensions,
-        i = exts.length;
+    extensions = this.extensions;
+    i = exts.length;
 
     while (i--) {
-        if ((mimeType = extensions.get(exts[i]))) break;
+        if ((mimeType = extensions.get(exts[i]))) {
+            break;
+        }
     }
 
     if (mimeType) {
@@ -145,12 +173,16 @@ Mime.prototype.unregister = function(exts) {
 };
 
 Mime.prototype.unregisterType = function(types) {
+    var thisTypes, i;
+
     types = isArray(types) ? types : (isString(types) ? types.split(SPLITER) : []);
-    var thisTypes = this.thisTypes,
-        i = types.length;
+    thisTypes = this.thisTypes;
+    i = types.length;
 
     while (i--) {
-        if ((mimeType = thisTypes.get(types[i]))) break;
+        if ((mimeType = thisTypes.get(types[i]))) {
+            break;
+        }
     }
 
     if (mimeType) {
@@ -166,7 +198,9 @@ Mime.prototype.fileType = function(value) {
         key;
 
     for (key in fileType) {
-        if (fileType[key](buf)) return key;
+        if (fileType[key](buf)) {
+            return key;
+        }
     }
     return undefined;
 };
@@ -174,12 +208,14 @@ Mime.prototype.fileType = function(value) {
 Mime.prototype.lookUp = function(path, fallback) {
     var ext = path.replace(REPLACER, "").toLowerCase(),
         types = this.types,
-        mimeType = this.types.get(ext),
+        typesArray = types.__array,
+        mimeType = types.get(ext),
         testMimeType, exts, i, j, jl;
 
     if (!mimeType) {
-        for (i = types.length; i--;) {
-            testMimeType = types[i];
+        i = typesArray.length;
+        while (i--) {
+            testMimeType = typesArray[i];
             exts = testMimeType.exts;
 
             for (j = 0, jl = exts.length; j < jl; j++) {
@@ -188,40 +224,60 @@ Mime.prototype.lookUp = function(path, fallback) {
                     break;
                 }
             }
-            if (mimeType) break;
+            if (mimeType) {
+                break;
+            }
         }
     }
-    if (!mimeType && fallback === false) return null;
+    if (!mimeType && fallback === false) {
+        return null;
+    }
 
     return (mimeType && mimeType.type) || fallback || this.defaultType;
 };
 
 Mime.prototype.lookUpType = function(ext, fallback) {
+    var mimeType;
+
     ext = ext.replace(REPLACER, "").toLowerCase();
-    var mimeType = this.types.get(ext);
-    if (!mimeType && fallback === false) return null;
+    mimeType = this.types.get(ext);
+
+    if (!mimeType && fallback === false) {
+        return null;
+    }
 
     return (mimeType && mimeType.type) || fallback || this.defaultType;
 };
 
 Mime.prototype.lookUpExt = function(type, fallback) {
+    var mimeType;
+
     type = type.replace(TYPE_REPLACER, "").toLowerCase();
-    var mimeType = this.extensions.get(type);
-    if (!mimeType && fallback === false) return null;
+    mimeType = this.extensions.get(type);
+
+    if (!mimeType && fallback === false) {
+        return null;
+    }
 
     return (mimeType && mimeType.ext) || fallback || this.defaultType;
 };
 
 Mime.prototype.toJSON = function(json) {
-    json || (json = {});
-    var types = this.types,
-        extensions = this.extensions,
-        jsonTypes = json.types || (json.types = []),
-        jsonExtensions = json.extensions || (json.extensions = []),
-        i, il;
+    var types, extensions, jsonTypes, jsonExtensions, i, il;
 
-    for (i = 0, il = types.length; i < il; i++) jsonTypes[i] = types[i].toJSON(jsonTypes[i]);
-    for (i = 0, il = extensions.length; i < il; i++) jsonExtensions[i] = extensions[i].toJSON(jsonExtensions[i]);
+    json || (json = {});
+
+    types = this.types.__array;
+    extensions = this.extensions.__array;
+    jsonTypes = json.types || (json.types = []);
+    jsonExtensions = json.extensions || (json.extensions = []);
+
+    for (i = 0, il = types.length; i < il; i++) {
+        jsonTypes[i] = types[i].toJSON(jsonTypes[i]);
+    }
+    for (i = 0, il = extensions.length; i < il; i++) {
+        jsonExtensions[i] = extensions[i].toJSON(jsonExtensions[i]);
+    }
 
     json.defaultType = this.defaultType;
     json.defaultExtension = this.defaultExtension;
@@ -237,20 +293,21 @@ Mime.prototype.fromJSON = function(json) {
         type, extension,
         i, il;
 
-    types.length = jsonTypes.length;
+    types.clear();
+    extensions.clear();
+
     for (i = 0, il = jsonTypes.length; i < il; i++) {
         if ((type = types[i])) {
             type.fromJSON(jsonTypes[i]);
         } else {
-            types.push(new MimeType().fromJSON(jsonTypes[i]));
+            types.add(new MimeType().fromJSON(jsonTypes[i]));
         }
     }
-    extensions.length = jsonExtensions.length;
     for (i = 0, il = jsonExtensions.length; i < il; i++) {
         if ((extension = extensions[i])) {
             extension.fromJSON(jsonExtensions[i]);
         } else {
-            extensions.push(new MimeType().fromJSON(jsonExtensions[i]));
+            extensions.add(new MimeType().fromJSON(jsonExtensions[i]));
         }
     }
 
