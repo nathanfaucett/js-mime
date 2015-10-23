@@ -1,81 +1,14 @@
 var FastHash = require("fast_hash"),
     isArray = require("is_array"),
     isString = require("is_string"),
-    fileType = require("file_type");
+    fileType = require("file_type"),
+    MimeType = require("./MimeType"),
+    SPLITER = require("./SPLITER");
 
 
-var SPLITER = /[ ,]+/,
-    REPLACER = /.*[\.\/\\]/,
-    TYPE_REPLACER = /;[(.*)\S\s]+/;
-
-
-function MimeType(types, exts) {
-    this.types = isArray(types) ? types : (isString(types) ? types.split(SPLITER) : []);
-    this.type = this.types[0];
-    this.exts = isArray(exts) ? exts : (isString(exts) ? exts.split(SPLITER) : []);
-    this.ext = this.exts[0];
-}
-
-MimeType.prototype.toJSON = function(json) {
-    var exts, types, jsonExts, jsonTypes, i, il;
-
-    json || (json = {});
-
-    exts = this.exts;
-    types = this.types;
-    jsonExts = json.exts || (json.exts = []);
-    jsonTypes = json.types || (json.types = []);
-
-    if (jsonExts.length) {
-        jsonExts.length = 0;
-    }
-
-    for (i = 0, il = exts.length; i < il; i++) {
-        jsonExts.push(exts[i]);
-    }
-
-    if (jsonTypes.length) {
-        jsonTypes.length = 0;
-    }
-
-    for (i = 0, il = types.length; i < il; i++) {
-        jsonTypes.push(types[i]);
-    }
-
-    json.type = this.type;
-    json.ext = this.ext;
-
-    return json;
-};
-
-MimeType.prototype.fromJSON = function(json) {
-    var exts = this.exts,
-        types = this.types,
-        jsonExts = json.exts || (json.exts = []),
-        jsonTypes = json.types || (json.types = []),
-        i, il;
-
-    if (types.length) {
-        types.length = 0;
-    }
-
-    for (i = 0, il = jsonTypes.length; i < il; i++) {
-        types.push(jsonTypes[i]);
-    }
-
-    if (exts.length) {
-        exts.length = 0;
-    }
-
-    for (i = 0, il = jsonExts.length; i < il; i++) {
-        exts.push(jsonExts[i]);
-    }
-
-    this.type = json.type;
-    this.ext = json.ext;
-
-    return this;
-};
+var REPLACER = /.*[\.\/\\]/,
+    TYPE_REPLACER = /;[(.*)\S\s]+/,
+    MimePrototype;
 
 
 function Mime() {
@@ -88,8 +21,9 @@ function Mime() {
 
     this.defaults();
 }
+MimePrototype = Mime.prototype;
 
-Mime.prototype.defaults = function() {
+MimePrototype.defaults = function() {
     if (this.types.count() > 0 || this.extensions.count() > 0) {
         this.clear();
     }
@@ -131,7 +65,7 @@ Mime.prototype.defaults = function() {
     return this;
 };
 
-Mime.prototype.clear = function() {
+MimePrototype.clear = function() {
 
     this.defaultType = "text/plain";
     this.defaultExtension = "txt";
@@ -142,7 +76,7 @@ Mime.prototype.clear = function() {
     return this;
 };
 
-Mime.prototype.register = function(types, exts) {
+MimePrototype.register = function(types, exts) {
     var mimeType = new MimeType(types, exts);
 
     this.types.add(mimeType);
@@ -151,7 +85,7 @@ Mime.prototype.register = function(types, exts) {
     return this;
 };
 
-Mime.prototype.unregister = function(exts) {
+MimePrototype.unregister = function(exts) {
     var extensions, i;
 
     exts = isArray(exts) ? exts : (isString(exts) ? exts.split(SPLITER) : []);
@@ -172,7 +106,7 @@ Mime.prototype.unregister = function(exts) {
     return this;
 };
 
-Mime.prototype.unregisterType = function(types) {
+MimePrototype.unregisterType = function(types) {
     var thisTypes, i;
 
     types = isArray(types) ? types : (isString(types) ? types.split(SPLITER) : []);
@@ -193,7 +127,7 @@ Mime.prototype.unregisterType = function(types) {
     return this;
 };
 
-Mime.prototype.fileType = function(value) {
+MimePrototype.fileType = function(value) {
     var buf = Buffer.isBuffer(value) ? value : new Buffer(value),
         key;
 
@@ -205,7 +139,7 @@ Mime.prototype.fileType = function(value) {
     return undefined;
 };
 
-Mime.prototype.lookUp = function(path, fallback) {
+MimePrototype.lookUp = function(path, fallback) {
     var ext = path.replace(REPLACER, "").toLowerCase(),
         types = this.types,
         typesArray = types.__array,
@@ -236,7 +170,7 @@ Mime.prototype.lookUp = function(path, fallback) {
     return (mimeType && mimeType.type) || fallback || this.defaultType;
 };
 
-Mime.prototype.lookUpType = function(ext, fallback) {
+MimePrototype.lookUpType = function(ext, fallback) {
     var mimeType;
 
     ext = ext.replace(REPLACER, "").toLowerCase();
@@ -249,7 +183,7 @@ Mime.prototype.lookUpType = function(ext, fallback) {
     return (mimeType && mimeType.type) || fallback || this.defaultType;
 };
 
-Mime.prototype.lookUpExt = function(type, fallback) {
+MimePrototype.lookUpExt = function(type, fallback) {
     var mimeType;
 
     type = type.replace(TYPE_REPLACER, "").toLowerCase();
@@ -262,7 +196,7 @@ Mime.prototype.lookUpExt = function(type, fallback) {
     return (mimeType && mimeType.ext) || fallback || this.defaultType;
 };
 
-Mime.prototype.toJSON = function(json) {
+MimePrototype.toJSON = function(json) {
     var types, extensions, jsonTypes, jsonExtensions, i, il;
 
     json || (json = {});
@@ -285,7 +219,7 @@ Mime.prototype.toJSON = function(json) {
     return json;
 };
 
-Mime.prototype.fromJSON = function(json) {
+MimePrototype.fromJSON = function(json) {
     var types = this.types,
         extensions = this.extensions,
         jsonTypes = json.types,

@@ -7,23 +7,31 @@
     "url": "https://github.com/nathanfaucett/mime.git"
   },
   "main": "src/index.js",
+  "scripts": {
+    "test": "npm run test-node",
+    "test-node": "node ./test | ./node_modules/.bin/tap-spec",
+    "test-node-raw": "node ./test",
+    "test-browser-local": "zuul --local 8080 --ui tape -- ./test"
+  },
   "keywords": [
     "mime",
     "mime.js"
   ],
   "author": "Nathan Faucett",
-  "license": "BSD-2-Clause",
+  "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "grunt": "",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-jsbeautifier": "",
-    "mocha": "^2.1.0"
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-jsbeautifier": "^0.2.10",
+    "tap-spec": "^4.1.0",
+    "tape": "^4.2.0",
+    "zuul": "^3.6.0"
   },
   "dependencies": {
-    "file_type": "nathanfaucett/file_type",
-    "fast_hash": "nathanfaucett/fast_hash",
-    "is_string": "nathanfaucett/is_string",
-    "is_array": "nathanfaucett/is_array"
+    "file_type": "git://github.com/nathanfaucett/file_type.git",
+    "fast_hash": "git://github.com/nathanfaucett/fast_hash.git",
+    "is_string": "git://github.com/nathanfaucett/is_string.git",
+    "is_array": "git://github.com/nathanfaucett/is_array.git"
   }
 }
