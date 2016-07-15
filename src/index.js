@@ -1,7 +1,7 @@
-var FastHash = require("fast_hash"),
-    isArray = require("is_array"),
-    isString = require("is_string"),
-    fileType = require("file_type"),
+var FastHash = require("@nathanfaucett/fast_hash"),
+    isArray = require("@nathanfaucett/is_array"),
+    isString = require("@nathanfaucett/is_string"),
+    fileType = require("@nathanfaucett/file_type"),
     MimeType = require("./MimeType"),
     SPLITER = require("./SPLITER");
 

@@ -1,5 +1,5 @@
-var isArray = require("is_array"),
-    isString = require("is_string"),
+var isArray = require("@nathanfaucett/is_array"),
+    isString = require("@nathanfaucett/is_string"),
     SPLITER = require("./SPLITER");
 
 
