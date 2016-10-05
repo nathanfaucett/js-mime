@@ -1,6 +1,6 @@
 {
   "name": "@nathanfaucett/mime",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "mime for the browser and node.js",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "zuul": "^3.6.0"
   },
   "dependencies": {
-    "@nathanfaucett/file_type": "^0.0.1",
+    "@nathanfaucett/file_type": "^0.0.2",
     "@nathanfaucett/fast_hash": "^0.0.1",
     "@nathanfaucett/is_string": "^0.0.1",
     "@nathanfaucett/is_array": "^0.0.1"
